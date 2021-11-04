@@ -1,4 +1,4 @@
-# A Database CLI Application
+# An Automatic Customized Portfolio Construction CLI Application
 
 # Import modules
 import pandas as pd
@@ -25,7 +25,8 @@ alpaca_secret_key = os.getenv("ALPACA_SECRET_KEY")
 def portoflio_selection(customer_bond_weight, customer_stock_weight):
 
 
-    ###Prepare the data
+    ###Part 1: Prepare the data
+
     #Change the users' inputs to float and append to the weight list
     customer_bond_weight = float(customer_bond_weight)
     customer_stock_weight = float(customer_stock_weight)
@@ -59,7 +60,7 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     
 
 
-    ###Run the MC simulation
+    ###Part 2:Run the MC simulation
     
     #set up MC simulation
     MC_weight = MCSimulation(
@@ -86,7 +87,7 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
 
 
 
-    ###Visuallation
+    ###Part 3:Visuallation
 
     #Print the simulated portfolio allocation
     portfolio_allocation = customber_choose_weight
@@ -108,7 +109,7 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
 
 
     #Print the simulated daily returns
-    plt.title("Simulated Daily Returns Behavior of Your Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
+    plt.title("Simulated Daily Returns Behaviors of Your Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
     plt.plot(df_simulated_returns)
     plt.show()
     
@@ -123,16 +124,18 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     plt.show()
     
 
+    #Calculate the results of simulation portfolio
     ci_lower_three_cumulative_return = MC_weight_table[8] * initial_investment
     ci_upper_three_cumulative_return = MC_weight_table[9] * initial_investment
 
+    #Suppose the risk-free rate is 2%
     risk_free_rate = 0.02
 
     sharpe_ratio = (MC_weight_table[1] - risk_free_rate) / MC_weight_table[2]
     
     # Create a statement that displays the `results` of simulated portfolio calculation.
     # On a separate line (\n) ask the use if they would like to continue running the application.
-    results = f"There is a 95% chance that an initial investment of ${initial_investment} in the simulated stock and bond portfolio over the next 3 years will end within in the range of ${ci_lower_three_cumulative_return: .2f} and ${ci_upper_three_cumulative_return: .2f}. The Sharpe ratio of the simulated portfolio is {sharpe_ratio: .2f}"
+    results = f"There is a 95% chance that an initial investment of ${initial_investment} in the simulated stock and bond portfolio over the next 3 years will end within in the range of ${ci_lower_three_cumulative_return: .2f} and ${ci_upper_three_cumulative_return: .2f}. The Sharpe ratio of your simulated portfolio is {sharpe_ratio: .2f}"
     
     # Using the `results` statement created above,
     # prompt the user to run the report again (`y`) or exit the program (`n`).
@@ -153,7 +156,7 @@ if __name__ == "__main__":
 
     print("The portfolio will be constructed based on your choice\n")
 
-    print("We will forcast and display the result of your simulated portfolio in the next 3 years through Monte Carlo Simulation\n")
+    print("We will forecast and display the result of your simulated portfolio in the next 3 years through Monte Carlo Simulation\n")
 
     print("\n......Instruction.....\n")
 
