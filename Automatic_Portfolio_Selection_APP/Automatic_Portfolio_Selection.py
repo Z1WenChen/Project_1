@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
     print("\n......Welcome to the Portflio Selection APP.....\n")
 
-    print("The portfolio will be constructed based your choice\n")
+    print("The portfolio will be constructed based on your choice\n")
 
     print("We will forcast and display the result of your simulated portfolio in the next 3 years through Monte Carlo Simulation\n")
 
