@@ -7,8 +7,6 @@ import os
 import alpaca_trade_api as tradeapi
 from dotenv import load_dotenv
 import questionary
-import requests
-import json
 from MCForecastTools import MCSimulation
 
 
@@ -116,7 +114,7 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     
      # Create a statement that displays the `results` of your sector_yearly_return calculation.
     # On a separate line (\n) ask the use if they would like to continue running the report.
-    results = f"There is a 95% chance that an initial investment of ${initial_investment} in the simulated stock and bond portfolio over the next 3 years will end within in the range of {ci_lower_three_cumulative_return: .2f} and ${ci_upper_three_cumulative_return: .2f}. The Sharpe ratio of the simulated portfolio is {sharpe_ratio: .2f}"
+    results = f"There is a 95% chance that an initial investment of ${initial_investment} in the simulated stock and bond portfolio over the next 3 years will end within in the range of ${ci_lower_three_cumulative_return: .2f} and ${ci_upper_three_cumulative_return: .2f}. The Sharpe ratio of the simulated portfolio is {sharpe_ratio: .2f}"
     
     # Using the `results` statement created above,
     # prompt the user to run the report again (`y`) or exit the program (`n`).
@@ -131,13 +129,23 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
 # It is the entry point for the program.
 if __name__ == "__main__":
 
-    # Print a welcome message for the application
+    # Print a welcome and instruction message for the application
+
     print("\n......Welcome to the Portflio Selection APP.....\n")
-    print("The portfolio will be constructed based your choice\n")
+
+    print("The portfolio will be constructed based on your choice\n")
+
+    print("We will forcast and display the result of your simulated portfolio in the next 3 years through Monte Carlo Simulation\n")
+
+    print("\n......Instruction.....\n")
+
+    print("First Step: Please enter your desired portion of bond in your portfolio. For example, 40% is to input .40\n")
+    print("Second Step: Please enter your desired portion of stock in your portfolio. For example, 60% is to input .60\n")
+    print("REMEMBER: The numbers entered in the first step and the second step should be added equal to 1. \n")
     
     # Let the users customize their portfolios with Bond/Stock weights     
-    customer_bond_weight = questionary.text("What's your desired weight of Bond in the portfolio? For example, 40% is to input .40").ask()
-    customer_stock_weight = questionary.text("What's your desired weight of Stock in the portfolio? For example, 40% is to input .40").ask()
+    customer_bond_weight = questionary.text("What's your desired weight of Bond in the portfolio?").ask()
+    customer_stock_weight = questionary.text("What's your desired weight of Stock in the portfolio?").ask()
 
     # Create a variable named running and set it to True
     running = True
