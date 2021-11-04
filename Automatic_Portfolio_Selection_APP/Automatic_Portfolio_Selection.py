@@ -19,12 +19,14 @@ alpaca_api_key = os.getenv("ALPACA_API_KEY")
 alpaca_secret_key = os.getenv("ALPACA_SECRET_KEY")
 
 
-# Create a function called `Portfolio_selection` that will select portfolio for investors who are in the different level of risk-averse.
+# Create a function called `Portfolio_selection` that will construct a portfolio based on users' weights
 # This function will be called from the `__main__` loop.
 
 def portoflio_selection(customer_bond_weight, customer_stock_weight):
 
-    # Using questionary, ask the investor what is his/her risk-aversion level 
+
+    ###Prepare the data
+    #Change the users' inputs to float and append to the weight list
     customer_bond_weight = float(customer_bond_weight)
     customer_stock_weight = float(customer_stock_weight)
     customber_choose_weight = []
@@ -33,12 +35,13 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
 
     print("Running report ...")
     
-    #Get API data
+    #Setup API 
     alpaca = tradeapi.REST(
     alpaca_api_key,
     alpaca_secret_key,
     api_version = "v2")
     
+    #Setup parameters for API Data
     tickers = ["SPY", "AGG"]
 
     timeframe = "1D"
@@ -46,7 +49,7 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     start_date = pd.Timestamp("2019-01-02", tz = "America/New_York").isoformat()
     end_date = pd.Timestamp("2021-10-31", tz = "America/New_York").isoformat()
     
-    
+    #Get API Data in a dataframe
     prices_df = alpaca.get_barset(
     tickers,
     timeframe,
@@ -54,9 +57,11 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     end = end_date
     ).df
     
+
+
+    ###Run the MC simulation
     
-    
-    #Run the MC simulation
+    #set up MC simulation
     MC_weight = MCSimulation(
       portfolio_data = prices_df,
       weights = customber_choose_weight,
@@ -68,18 +73,22 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     
     MC_weight_line_plot = MC_weight.plot_simulation()
     
-    
     MC_weight_distribution_plot = MC_weight.plot_distribution()
     
     
     MC_weight_table = MC_weight.summarize_cumulative_return()
-    
-    
-    #Visuallation
 
+
+    #Display the simulation result
+    print("\n......Your Simulated Portfolio Results.....\n")
+    print (MC_weight_table)
+    
+
+
+
+    ###Visuallation
 
     #Print the simulated portfolio allocation
-
     portfolio_allocation = customber_choose_weight
     portfolio_labels = ["AGG", "SPY"]
 
@@ -88,26 +97,28 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     plt.show()
     
 
-
+    #Prepare the simulated returns data
     simulated_returns_data = {
     "mean": list(MC_weight.simulated_return.mean(axis=1)),
     "median": list(MC_weight.simulated_return.median(axis=1)),
     "min": list(MC_weight.simulated_return.min(axis=1)),
     "max": list(MC_weight.simulated_return.max(axis=1))}
     
-    
     df_simulated_returns = pd.DataFrame(simulated_returns_data)
 
-    plt.title("Simulated Daily Returns Behavior of simulated portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
+
+    #Print the simulated daily returns
+    plt.title("Simulated Daily Returns Behavior of Your Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
     plt.plot(df_simulated_returns)
     plt.show()
     
 
+    #Print the simulated investment result
     initial_investment = 10000
 
     cumulative_pnl = initial_investment * df_simulated_returns
 
-    plt.title("The Result of Initial Investment of $10000 to the Simulated Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
+    plt.title("The Simulated Result of Initial Investment of $10000 to Your Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
     plt.plot(cumulative_pnl)
     plt.show()
     
@@ -127,7 +138,7 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     # prompt the user to run the report again (`y`) or exit the program (`n`).
     continue_running = questionary.select(results, choices=['y', 'n']).ask()
 
-    # Return the `continue_running` variable from the `sector_report` function
+    # Return the `continue_running` variable from the `portoflio_selection` function
     return continue_running
 
 
@@ -157,8 +168,8 @@ if __name__ == "__main__":
     # Create a variable named running and set it to True
     running = True
 
-    # While running is `True` call the `sector_report` function.
-    # Pass the `nyse_df` DataFrame `sectors` and the database `engine` as parameters.
+    # While running is `True` call the `portoflio_selection` function.
+    # Pass the "customer_bond_weight" and "customer_stock_weight" as parameters.
     while running:
         continue_running = portoflio_selection(customer_bond_weight, customer_stock_weight)
         if continue_running == 'y':
