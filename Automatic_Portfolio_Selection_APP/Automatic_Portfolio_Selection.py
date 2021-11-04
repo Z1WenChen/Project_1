@@ -8,6 +8,7 @@ import alpaca_trade_api as tradeapi
 from dotenv import load_dotenv
 import questionary
 from MCForecastTools import MCSimulation
+import matplotlib.pyplot as plt
 
 
 # Load .env file
@@ -75,6 +76,19 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     
     
     #Visuallation
+
+
+    #Print the simulated portfolio allocation
+
+    portfolio_allocation = customber_choose_weight
+    portfolio_labels = ["AGG", "SPY"]
+
+    plt.title("Simulated Portfolio Allocation")
+    plt.pie(portfolio_allocation, labels=portfolio_labels, autopct="%0.0f%%")
+    plt.show()
+    
+
+
     simulated_returns_data = {
     "mean": list(MC_weight.simulated_return.mean(axis=1)),
     "median": list(MC_weight.simulated_return.median(axis=1)),
@@ -83,10 +97,20 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
     
     
     df_simulated_returns = pd.DataFrame(simulated_returns_data)
+
+    plt.title("Simulated Daily Returns Behavior of simulated portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
+    plt.plot(df_simulated_returns)
+    plt.show()
     
-    df_simulated_returns.plot(title="Simulated Daily Returns Behavior of simulated portfolio Over the Next 3 Years")
-    
+
     initial_investment = 10000
+
+    cumulative_pnl = initial_investment * df_simulated_returns
+
+    plt.title("The Result of Initial Investment of $10000 to the Simulated Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
+    plt.plot(cumulative_pnl)
+    plt.show()
+    
 
     ci_lower_three_cumulative_return = MC_weight_table[8] * initial_investment
     ci_upper_three_cumulative_return = MC_weight_table[9] * initial_investment
@@ -95,25 +119,8 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight):
 
     sharpe_ratio = (MC_weight_table[1] - risk_free_rate) / MC_weight_table[2]
     
-    cumulative_pnl = initial_investment * df_simulated_returns
-    
-    cumulative_pnl.plot(title="Simulated Outcomes Behavior of the Portfolio Over the Next 3 Years")
-    
-    portfolio_allocation = customber_choose_weight
-
-    portfolio_df = pd.DataFrame(
-    {"amount": [portfolio_allocation[0], portfolio_allocation[1]]},
-    index = ["AGG", "SPY"])
-    
-    
-    portfolio_df.plot(
-    kind = "pie",
-    y='amount', 
-    title="The Money Growth Portfolio Composition: 20% Bond and 80% Stock"
-    )
-    
-     # Create a statement that displays the `results` of your sector_yearly_return calculation.
-    # On a separate line (\n) ask the use if they would like to continue running the report.
+    # Create a statement that displays the `results` of simulated portfolio calculation.
+    # On a separate line (\n) ask the use if they would like to continue running the application.
     results = f"There is a 95% chance that an initial investment of ${initial_investment} in the simulated stock and bond portfolio over the next 3 years will end within in the range of ${ci_lower_three_cumulative_return: .2f} and ${ci_upper_three_cumulative_return: .2f}. The Sharpe ratio of the simulated portfolio is {sharpe_ratio: .2f}"
     
     # Using the `results` statement created above,
