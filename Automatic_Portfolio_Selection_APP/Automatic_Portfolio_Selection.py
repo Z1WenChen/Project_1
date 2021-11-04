@@ -7,6 +7,12 @@ import os
 import alpaca_trade_api as tradeapi
 from dotenv import load_dotenv
 import questionary
+import requests
+import json
+from MCForecastTools import MCSimulation
+import matplotlib.pyplot as plt
+
+
 
 # Load .env file
 load_dotenv()
@@ -19,14 +25,14 @@ alpaca_secret_key = os.getenv("ALPACA_SECRET_KEY")
 # Create a function called `Portfolio_selection` that will select portfolio for investors who are in the different level of risk-averse.
 # This function will be called from the `__main__` loop.
 
-def portoflio_selection(customer_weights):
+def portoflio_selection(customer_bond_weight, customer_stock_weight, customer_initial_investment):
 
-    # Print a welcome message for the application
-    print("\n......Welcome to the Portflio Selection APP.....\n")
-    print("The portfolio will be constructed based your choice\n")
-
-    # Using questionary, ask the investor what is his/her risk-aversion level
-    customber_choose_weight = questionary.select("Which weights of portfolio you want?", choices = customer_weights).ask()
+    # Using questionary, ask the investor what is his/her risk-aversion level 
+    customer_bond_weight = float(customer_bond_weight)
+    customer_stock_weight = float(customer_stock_weight)
+    customber_choose_weight = []
+    customber_choose_weight.append(customer_bond_weight)
+    customber_choose_weight.append(customer_stock_weight)
 
     print("Running report ...")
     
@@ -72,7 +78,20 @@ def portoflio_selection(customer_weights):
     MC_weight_table = MC_weight.summarize_cumulative_return()
     
     
-    #Visuallation
+   #Visuallation
+
+
+    #Print the simulated portfolio allocation
+
+    portfolio_allocation = customber_choose_weight
+    portfolio_labels = ["AGG", "SPY"]
+
+    plt.title("Simulated Portfolio Allocation")
+    plt.pie(portfolio_allocation, labels=portfolio_labels, autopct="%0.0f%%")
+    plt.show()
+    
+
+
     simulated_returns_data = {
     "mean": list(MC_weight.simulated_return.mean(axis=1)),
     "median": list(MC_weight.simulated_return.median(axis=1)),
@@ -81,39 +100,30 @@ def portoflio_selection(customer_weights):
     
     
     df_simulated_returns = pd.DataFrame(simulated_returns_data)
-    
-    df_simulated_returns.plot(title="Simulated Daily Returns Behavior of simulated portfolio Over the Next 3 Years")
-    
-    initial_investment = 10000
 
-    ci_lower_three_cumulative_return = MC_weight_table[8] * initial_investment
-    ci_upper_three_cumulative_return = MC_weight_table[9] * initial_investment
+    plt.title("Simulated Daily Returns Behavior of simulated portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
+    plt.plot(df_simulated_returns)
+    plt.show()
+    
+
+    customer_initial_investment = float(customer_initial_investment)
+    cumulative_pnl = customer_initial_investment * df_simulated_returns
+
+    plt.title("The Result of Initial Investment to the Simulated Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
+    plt.plot(cumulative_pnl)
+    plt.show()
+    
+
+    ci_lower_three_cumulative_return = MC_weight_table[8] * customer_initial_investment
+    ci_upper_three_cumulative_return = MC_weight_table[9] * customer_initial_investment
 
     risk_free_rate = 0.02
 
     sharpe_ratio = (MC_weight_table[1] - risk_free_rate) / MC_weight_table[2]
     
-    # Create a statement that displays the `results` of your sector_yearly_return calculation.
-    # On a separate line (\n) ask the use if they would like to continue running the report.
-    results = f"There is a 95% chance that an initial investment of ${initial_investment} in the stock and bond portion of portfolio with a simulated portfolio over the next 3 years will end within in the range of {ci_lower_three_cumulative_return: .2f} and ${ci_upper_three_cumulative_return: .2f}. The Sharpe ratio of the simulated portfolio is {sharpe_ratio: .2f}"
-    
-    cumulative_pnl = initial_investment * df_simulated_returns
-    
-    cumulative_pnl.plot(title="Simulated Outcomes Behavior of the Portfolio Over the Next 3 Years")
-    
-    portfolio_allocation = customber_choose_weight
-
-    portfolio_df = pd.DataFrame(
-    {"amount": [portfolio_allocation[0], portfolio_allocation[1]]},
-    index = ["AGG", "SPY"])
-    
-    
-    portfolio_df.plot(
-    kind = "pie",
-    y='amount', 
-    title="The Money Growth Portfolio Composition: 20% Bond and 80% Stock"
-    )
-    
+    # Create a statement that displays the `results` of simulated portfolio calculation.
+    # On a separate line (\n) ask the use if they would like to continue running the application.
+    results = f"There is a 95% chance that an initial investment of ${customer_initial_investment} in the simulated stock and bond portfolio over the next 3 years will end within in the range of ${ci_lower_three_cumulative_return: .2f} and ${ci_upper_three_cumulative_return: .2f}. The Sharpe ratio of the simulated portfolio is {sharpe_ratio: .2f}"
     
     # Using the `results` statement created above,
     # prompt the user to run the report again (`y`) or exit the program (`n`).
@@ -128,12 +138,24 @@ def portoflio_selection(customer_weights):
 # It is the entry point for the program.
 if __name__ == "__main__":
 
-    # Want to link investors' risk-averse level with the portfolio
-    # Risk-Averse Level is measured from 1 - 5: 
-    # 1: Least risk-averse, 5: Most risk-averse
-    # 1: Most aggressive portfolio, Portfolio 2080
-    # 5: Most conservative portfolio, Portfolio 8020
-    customer_weights = [[.2,.8], [.4,.6], [.5,.5], [.6,.4], [.8,.2]]
+    # Print a welcome and instruction message for the application
+
+    print("\n......Welcome to the Portflio Selection APP.....\n")
+
+    print("The portfolio will be constructed based on your choice\n")
+
+    print("We will forcast and display the result of your simulated portfolio in the next 3 years through Monte Carlo Simulation\n")
+
+    print("\n......Instruction.....\n")
+
+    print("First Step: Please enter your desired portion of bond in your portfolio. For example, 40% is to input .40\n")
+    print("Second Step: Please enter your desired portion of stock in your portfolio. For example, 60% is to input .60\n")
+    print("REMEMBER: The numbers entered in the first step and the second step should be added equal to 1. \n")
+    
+    # Let the users customize their portfolios with Bond/Stock weights     
+    customer_bond_weight = questionary.text("What's your desired weight of Bond in the portfolio?").ask()
+    customer_stock_weight = questionary.text("What's your desired weight of Stock in the portfolio?").ask()
+    customer_initial_investment = questionary.text("What is your initial investment amount?").ask()
 
     # Create a variable named running and set it to True
     running = True
@@ -141,7 +163,7 @@ if __name__ == "__main__":
     # While running is `True` call the `sector_report` function.
     # Pass the `nyse_df` DataFrame `sectors` and the database `engine` as parameters.
     while running:
-        continue_running = portoflio_selection(customer_weights)
+        continue_running = portoflio_selection(customer_bond_weight, customer_stock_weight, customer_initial_investment)
         if continue_running == 'y':
             running = True
         else:
