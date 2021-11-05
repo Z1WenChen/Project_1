@@ -114,15 +114,21 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight, customer_in
     plt.title(f"The Simulated Result of Initial Investment of ${customer_initial_investment} to Your Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
     plt.plot(cumulative_pnl)
     plt.show()
-    
 
-    #Calculate the results of simulation portfolio
+
+
+
+    ###Part 4: Calculate the results of the simulated portfolio
+
+
+    #Calculate the lower and upper bound of returns
     ci_lower_three_cumulative_return = MC_weight_table[8] * customer_initial_investment
     ci_upper_three_cumulative_return = MC_weight_table[9] * customer_initial_investment
 
     #Suppose the risk-free rate is 2%
     risk_free_rate = 0.02
 
+    #Calculate the Sharpe ratio
     sharpe_ratio = (MC_weight_table[1] - risk_free_rate) / MC_weight_table[2]
     
     # Create a statement that displays the `results` of simulated portfolio calculation.
