@@ -158,7 +158,7 @@ if __name__ == "__main__":
     print("Step 3: Please enter your initial investment for your simulated portfolio. \n")
     print("Step 4: Please enter how many simulations to run. 500 is recommended, but please enter the times based on your need. \n")
     
-    # Let the users customize their portfolios with Bond/Stock weights
+    # Let the users customize their portfolios with Bond/Stock weights, initial investment, and simulation times
     customer_bond_weight = questionary.text("What's your desired weight of Bond in the portfolio?").ask()
     customer_stock_weight = questionary.text("What's your desired weight of Stock in the portfolio?").ask()
     customer_initial_investment = questionary.text("What's your intial investment for your simulated portfolio?").ask()
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     running = True
 
     # While running is `True` call the `portoflio_selection` function.
-    # Pass the "customer_bond_weight" and "customer_stock_weight" as parameters.
+    # Pass the "customer_bond_weight", "customer_stock_weight", "customer_initial_investment", and "simulation_times" as parameters.
     while running:
 
         # Use the conditional statement to prevent the wrong weights input
