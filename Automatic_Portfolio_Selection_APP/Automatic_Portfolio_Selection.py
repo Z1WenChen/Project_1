@@ -22,14 +22,12 @@ alpaca_secret_key = os.getenv("ALPACA_SECRET_KEY")
 # Create a function called `Portfolio_selection` that will construct a portfolio based on users' weights
 # This function will be called from the `__main__` loop.
 
-def portoflio_selection(customer_bond_weight, customer_stock_weight, customer_initial_investment):
+def portoflio_selection(customer_bond_weight, customer_stock_weight, customer_initial_investment, simulation_times):
 
 
     ###Part 1: Prepare the data
 
     #Change the users' inputs to float and append to the weight list
-    customer_bond_weight = float(customer_bond_weight)
-    customer_stock_weight = float(customer_stock_weight)
     customber_choose_weight = []
     customber_choose_weight.append(customer_bond_weight)
     customber_choose_weight.append(customer_stock_weight)
@@ -66,13 +64,10 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight, customer_in
     MC_weight = MCSimulation(
       portfolio_data = prices_df,
       weights = customber_choose_weight,
-      num_simulation = 500,
+      num_simulation = simulation_times,
       num_trading_days = 252*3)
     
     MC_weight.calc_cumulative_return()
-    
-
-    
     
     MC_weight_table = MC_weight.summarize_cumulative_return()
 
@@ -157,15 +152,22 @@ if __name__ == "__main__":
 
     print("\n......Instruction.....\n")
 
-    print("First Step: Please enter your desired portion of bond in your portfolio. For example, 40% is to input .40\n")
-    print("Second Step: Please enter your desired portion of stock in your portfolio. For example, 60% is to input .60\n")
+    print("Step 1: Please enter your desired portion of bond in your portfolio. For example, 40% is to input .40\n")
+    print("Step 2: Please enter your desired portion of stock in your portfolio. For example, 60% is to input .60\n")
     print("REMEMBER: The numbers entered in the first step and the second step should be added equal to 1. \n")
-    print("Third Step: Please enter your initial investment for your simulated portfolio. \n")
+    print("Step 3: Please enter your initial investment for your simulated portfolio. \n")
+    print("Step 4: Please enter how many simulations to run. 500 is recommended, but please enter the times based on your need. \n")
     
-    # Let the users customize their portfolios with Bond/Stock weights     
+    # Let the users customize their portfolios with Bond/Stock weights
     customer_bond_weight = questionary.text("What's your desired weight of Bond in the portfolio?").ask()
     customer_stock_weight = questionary.text("What's your desired weight of Stock in the portfolio?").ask()
-    customer_initial_investment = questionary.text("What's your intial investment?").ask()
+    customer_initial_investment = questionary.text("What's your intial investment for your simulated portfolio?").ask()
+    simulation_times = questionary.text("How many simulations do you want to run?").ask()
+
+    customer_bond_weight = float(customer_bond_weight)
+    customer_stock_weight = float(customer_stock_weight)
+    simulation_times = int(simulation_times)
+
 
     # Create a variable named running and set it to True
     running = True
@@ -173,8 +175,14 @@ if __name__ == "__main__":
     # While running is `True` call the `portoflio_selection` function.
     # Pass the "customer_bond_weight" and "customer_stock_weight" as parameters.
     while running:
-        continue_running = portoflio_selection(customer_bond_weight, customer_stock_weight,customer_initial_investment)
-        if continue_running == 'y':
-            running = True
+
+        # Use the conditional statement to prevent the wrong weights input
+        if (customer_bond_weight + customer_stock_weight) == 1:
+            continue_running = portoflio_selection(customer_bond_weight, customer_stock_weight,customer_initial_investment, simulation_times)
+            if continue_running == 'y':
+                running = True
+            else:
+                running = False
         else:
+            print ("Sorry, Please input the correct weights and try again. Remember, two weights should be added equal to 1")
             running = False
