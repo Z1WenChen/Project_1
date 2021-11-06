@@ -91,28 +91,56 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
     
 
     #Prepare the simulated returns data
-    simulated_returns_data = {
-    "mean": list(MC_weight.simulated_return.mean(axis=1)),
-    "median": list(MC_weight.simulated_return.median(axis=1)),
-    "min": list(MC_weight.simulated_return.min(axis=1)),
-    "max": list(MC_weight.simulated_return.max(axis=1))}
+
+    #Plan A: Use Dataframe
+    #simulated_returns_data = {
+    #"mean": list(MC_weight.simulated_return.mean(axis=1)),
+    #"median": list(MC_weight.simulated_return.median(axis=1)),
+    #"min": list(MC_weight.simulated_return.min(axis=1)),
+    #"max": list(MC_weight.simulated_return.max(axis=1))}
     
-    df_simulated_returns = pd.DataFrame(simulated_returns_data)
+    #df_simulated_returns = pd.DataFrame(simulated_returns_data)
+
+    #Plan B: Define separately
+    simulate_mean = list(MC_weight.simulated_return.mean(axis=1))
+    simulate_median = list(MC_weight.simulated_return.median(axis=1))
+    simulate_min = list(MC_weight.simulated_return.min(axis=1))
+    simulate_max = list(MC_weight.simulated_return.max(axis=1))
 
 
     #Print the simulated daily returns
-    plt.title("Simulated Daily Returns Behaviors of Your Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
-    plt.plot(df_simulated_returns)
+    plt.plot(simulate_mean, label = "mean")
+    plt.plot(simulate_median, label = "median")
+    plt.plot(simulate_min, label = "min")
+    plt.plot(simulate_max, label = "max")
+    plt.legend(title = "4 Simulation Path")
+    plt.title("Simulated Daily Returns Behaviors of Your Portfolio Over the Next 3 Years")
+    plt.xlabel("Number of Days")
+    plt.ylabel("Portfolio Value Multiplier")
     plt.show()
-    
+
 
     #Print the simulated investment result
-    customer_initial_investment = float(customer_initial_investment)
 
-    cumulative_pnl = customer_initial_investment * df_simulated_returns
+    #Plan A: Use Dataframe
+    #cumulative_pnl = customer_initial_investment * df_simulated_returns
 
-    plt.title(f"The Simulated Result of Initial Investment of ${customer_initial_investment} to Your Portfolio Over the Next 3 Years: Max, Min, Mean, and Median")
-    plt.plot(cumulative_pnl)
+
+    #Plan B: Define separately
+
+    cumulative_pnl_mean = [element * customer_initial_investment for element in simulate_mean]
+    cumulative_pnl_median = [element * customer_initial_investment for element in simulate_median]
+    cumulative_pnl_min = [element * customer_initial_investment for element in simulate_min]
+    cumulative_pnl_max = [element * customer_initial_investment for element in simulate_max]
+
+    plt.plot(cumulative_pnl_mean, label = "mean")
+    plt.plot(cumulative_pnl_median, label = "median")
+    plt.plot(cumulative_pnl_min, label = "min")
+    plt.plot(cumulative_pnl_max, label = "max")
+    plt.legend(title = "4 Simulation Path")
+    plt.title(f"Your Simulated Portfolio Performance of Initial Investment ${customer_initial_investment} Over the Next 3 Years")
+    plt.xlabel("Number of Days")
+    plt.ylabel("Portfolio Value")
     plt.show()
 
 
@@ -162,7 +190,7 @@ if __name__ == "__main__":
     print("Step 2: Please enter your desired portion of stock in your portfolio. For example, 60% is to input .60\n")
     print("REMEMBER: The numbers entered in the first step and the second step should be added equal to 1. \n")
     print("Step 3: Please enter your initial investment for your simulated portfolio. \n")
-    print("Step 4: Please enter how many simulations to run. 500 is recommended, but please enter the times based on your need. \n")
+    print("Step 4: Please enter how many simulations to run. Recommendation: 400, but please enter the times based on your need. \n")
     
     # Let the users customize their portfolios with Bond/Stock weights, initial investment, and simulation times
     customer_bond_weight = questionary.text("What's your desired weight of Bond in the portfolio?").ask()
@@ -172,6 +200,7 @@ if __name__ == "__main__":
 
     customer_bond_weight = float(customer_bond_weight)
     customer_stock_weight = float(customer_stock_weight)
+    customer_initial_investment = float(customer_initial_investment)
     simulation_times = int(simulation_times)
 
 
