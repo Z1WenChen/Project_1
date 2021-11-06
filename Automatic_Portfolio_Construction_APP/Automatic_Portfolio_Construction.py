@@ -128,15 +128,15 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
 
     #Plan B: Define separately
 
-    cumulative_pnl_mean = [element * customer_initial_investment for element in simulate_mean]
-    cumulative_pnl_median = [element * customer_initial_investment for element in simulate_median]
-    cumulative_pnl_min = [element * customer_initial_investment for element in simulate_min]
-    cumulative_pnl_max = [element * customer_initial_investment for element in simulate_max]
+    simulate_pnl_mean = [element * customer_initial_investment for element in simulate_mean]
+    simulate_pnl_median = [element * customer_initial_investment for element in simulate_median]
+    simulate_pnl_min = [element * customer_initial_investment for element in simulate_min]
+    simulate_pnl_max = [element * customer_initial_investment for element in simulate_max]
 
-    plt.plot(cumulative_pnl_mean, label = "mean")
-    plt.plot(cumulative_pnl_median, label = "median")
-    plt.plot(cumulative_pnl_min, label = "min")
-    plt.plot(cumulative_pnl_max, label = "max")
+    plt.plot(simulate_pnl_mean, label = "mean")
+    plt.plot(simulate_pnl_median, label = "median")
+    plt.plot(simulate_pnl_min, label = "min")
+    plt.plot(simulate_pnl_max, label = "max")
     plt.legend(title = "4 Simulation Path")
     plt.title(f"Your Simulated Portfolio Performance of Initial Investment ${customer_initial_investment} Over the Next 3 Years")
     plt.xlabel("Number of Days")
