@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import questionary
 from MCForecastTools import MCSimulation
 import matplotlib.pyplot as plt
+import utility as ut
 
 
 # Load .env file
@@ -34,27 +35,13 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
 
     print("\n.....Running the App.....\n")
     
-    #Setup API 
-    alpaca = tradeapi.REST(
-    alpaca_api_key,
-    alpaca_secret_key,
-    api_version = "v2")
+    
     
     #Setup parameters for API Data
     tickers = ["SPY", "AGG"]
-
-    timeframe = "1D"
-
-    start_date = pd.Timestamp("2019-01-02", tz = "America/New_York").isoformat()
-    end_date = pd.Timestamp("2021-10-31", tz = "America/New_York").isoformat()
     
     #Get API Data in a dataframe
-    prices_df = alpaca.get_barset(
-    tickers,
-    timeframe,
-    start = start_date,
-    end = end_date
-    ).df
+    prices_df = ut.get_data(tickers)
     
 
 
