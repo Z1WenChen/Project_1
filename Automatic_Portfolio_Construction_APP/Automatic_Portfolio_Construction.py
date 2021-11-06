@@ -19,10 +19,10 @@ alpaca_api_key = os.getenv("ALPACA_API_KEY")
 alpaca_secret_key = os.getenv("ALPACA_SECRET_KEY")
 
 
-# Create a function called `Portfolio_selection` that will construct a portfolio based on users' weights
+# Create a function called `portoflio_construction` that will construct a portfolio based on users' weights
 # This function will be called from the `__main__` loop.
 
-def portoflio_selection(customer_bond_weight, customer_stock_weight, customer_initial_investment, simulation_times):
+def portoflio_construction(customer_bond_weight, customer_stock_weight, customer_initial_investment, simulation_times):
 
 
     ###Part 1: Prepare the data
@@ -32,7 +32,7 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight, customer_in
     customber_choose_weight.append(customer_bond_weight)
     customber_choose_weight.append(customer_stock_weight)
 
-    print("Running report ...")
+    print("\n.....Running the App.....\n")
     
     #Setup API 
     alpaca = tradeapi.REST(
@@ -139,7 +139,7 @@ def portoflio_selection(customer_bond_weight, customer_stock_weight, customer_in
     # prompt the user to run the report again (`y`) or exit the program (`n`).
     continue_running = questionary.select(results, choices=['y', 'n']).ask()
 
-    # Return the `continue_running` variable from the `portoflio_selection` function
+    # Return the `continue_running` variable from the `portoflio_construction` function
     return continue_running
 
 
@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
     # Print a welcome and instruction message for the application
 
-    print("\n......Welcome to the Portflio Selection APP.....\n")
+    print("\n......Welcome to Automatic Portfolio Construction APP.....\n")
 
     print("The portfolio will be constructed based on your choice\n")
 
@@ -178,13 +178,13 @@ if __name__ == "__main__":
     # Create a variable named running and set it to True
     running = True
 
-    # While running is `True` call the `portoflio_selection` function.
+    # While running is `True` call the `portoflio_construction` function.
     # Pass the "customer_bond_weight", "customer_stock_weight", "customer_initial_investment", and "simulation_times" as parameters.
     while running:
 
         # Use the conditional statement to prevent the wrong weights input
         if (customer_bond_weight + customer_stock_weight) == 1:
-            continue_running = portoflio_selection(customer_bond_weight, customer_stock_weight,customer_initial_investment, simulation_times)
+            continue_running = portoflio_construction(customer_bond_weight, customer_stock_weight,customer_initial_investment, simulation_times)
             if continue_running == 'y':
                 running = True
             else:
