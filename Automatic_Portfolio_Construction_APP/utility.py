@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 import alpaca_trade_api as tradeapi
-import numpy as np
+
 
 
 def get_data(tickers):
@@ -11,7 +11,7 @@ def get_data(tickers):
     Download data for the selected tickers from ALPACA API with the API keys
     stored in the 'api.env' document 
     """
-    load_dotenv('api.env')
+    load_dotenv()
     alpaca_api_key = os.getenv("ALPACA_API_KEY")
     alpaca_secret_key = os.getenv("ALPACA_SECRET_KEY")
     
