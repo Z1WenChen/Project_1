@@ -7,6 +7,7 @@ import questionary
 from MCForecastTools import MCSimulation
 import matplotlib.pyplot as plt
 import utility as ut
+import numpy as np
 
 
 
@@ -26,16 +27,32 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
     print("\n.....Running the App.....\n")
     
     
-    
     #Setup parameters for API Data
     tickers = ["SPY", "AGG"]
     
     #Get API Data in a dataframe
     prices_df = ut.get_data(tickers)
+
+    ###Part 2: Plot Efficient Frontier
     
+    print("n.....Displaying Efficient Frontier......\n")
+
+    #Prepare data for Efficient Frontier Calculation
+    AGG_return = ut.asset_return(prices_df["AGG"]["close"])
+    SPY_return = ut.asset_return(prices_df["SPY"]["close"])
+    returns_AGG_SPY = pd.concat ([AGG_return, SPY_return], axis = 1)
+    er = ut.annualize_rets(returns_AGG_SPY, 252)
+    cov = returns_AGG_SPY.cov()
+    ef_AGG_SPY = ut.ef2(100, er, cov)
+    plt.title("Efficient Frontier")
+    plt.plot(ef_AGG_SPY["Volatility"], ef_AGG_SPY["Returns"])
+    plt.xlabel("Volatility")
+    plt.ylabel("Return")
+    plt.show()
 
 
-    ###Part 2:Run the MC simulation
+
+    ###Part 3:Run the MC simulation
     
     #set up MC simulation
     MC_weight = MCSimulation(
@@ -56,7 +73,7 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
 
 
 
-    ###Part 3:Visuallation
+    ###Part 4:Visuallation
 
     #Print the simulated portfolio allocation
     portfolio_allocation = customber_choose_weight
@@ -132,6 +149,8 @@ if __name__ == "__main__":
     print("The portfolio will be constructed based on your choice\n")
 
     print("We will forecast and display the result of your simulated portfolio in the next 3 years through Monte Carlo Simulation\n")
+    
+    print("Before running the simulation, we will show you the Efficient Frontier displaying a set of optimal portfolios that offer the highest expected return for a defined level of risk. Each point on the frontier representing an optimal portfolio\n")
 
     print("\n......Instruction.....\n")
 
@@ -146,6 +165,7 @@ if __name__ == "__main__":
     customer_stock_weight = questionary.text("What's your desired weight of Stock in the portfolio?").ask()
     customer_initial_investment = questionary.text("What's your intial investment for your simulated portfolio?").ask()
     simulation_times = questionary.text("How many simulations do you want to run?").ask()
+
 
     customer_bond_weight = float(customer_bond_weight)
     customer_stock_weight = float(customer_stock_weight)
