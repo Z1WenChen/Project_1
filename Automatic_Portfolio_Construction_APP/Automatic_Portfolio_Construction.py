@@ -33,9 +33,12 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
     #Get API Data in a dataframe
     prices_df = ut.get_data(tickers)
 
+
+
+
     ###Part 2: Plot Efficient Frontier
     
-    print("n.....Displaying Efficient Frontier......\n")
+    print("\n.....Displaying Efficient Frontier......\n")
 
     #Prepare data for Efficient Frontier Calculation
     AGG_return = ut.asset_return(prices_df["AGG"]["close"])
@@ -49,6 +52,8 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
     plt.xlabel("Volatility")
     plt.ylabel("Return")
     plt.show()
+
+
 
 
 
@@ -85,17 +90,6 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
     
 
     #Prepare the simulated returns data
-
-    #Plan A: Use Dataframe
-    #simulated_returns_data = {
-    #"mean": list(MC_weight.simulated_return.mean(axis=1)),
-    #"median": list(MC_weight.simulated_return.median(axis=1)),
-    #"min": list(MC_weight.simulated_return.min(axis=1)),
-    #"max": list(MC_weight.simulated_return.max(axis=1))}
-    
-    #df_simulated_returns = pd.DataFrame(simulated_returns_data)
-
-    #Plan B: Define separately
     simulate_mean = list(MC_weight.simulated_return.mean(axis=1))
     simulate_median = list(MC_weight.simulated_return.median(axis=1))
     simulate_min = list(MC_weight.simulated_return.min(axis=1))
@@ -115,12 +109,6 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
 
 
     #Print the simulated investment result
-
-    #Plan A: Use Dataframe
-    #cumulative_pnl = customer_initial_investment * df_simulated_returns
-
-
-    #Plan B: Define separately
 
     simulate_pnl_mean = [element * customer_initial_investment for element in simulate_mean]
     simulate_pnl_median = [element * customer_initial_investment for element in simulate_median]
