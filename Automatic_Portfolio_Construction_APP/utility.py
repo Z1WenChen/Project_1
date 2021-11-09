@@ -59,13 +59,22 @@ def portfolio_vol(weights,covmat):
     """
     return (weights.T @ covmat @ weights)**0.5
 
-def ef2(n_points, er, cov):
+def efN(n_points, er, cov, numberOfTickers):
     """
-    Plots the 2-asset efficient frontier
+    Plots the n-asset efficient frontier
     """
 
+    weights = []
+
+    if numberOfTickers == 2:
+        weights = [np.array([w, 1-w]) for w in np.linspace(0, 1, n_points)]
+    if numberOfTickers == 3:
+        weights = [np.array([w, ww, 1 - w - ww]) for w in np.linspace(0, 1, n_points) for ww in np.linspace(0, 1 - w, n_points)]
+    if numberOfTickers == 4:
+        weights = [np.array([w, ww, 1 - w - ww, 1 - w - ww - www]) for w in np.linspace(0, 1, n_points) for ww in np.linspace(0, 1 - w, n_points) for www in np.linspace(0, 1 - w - ww, n_points) ]
+    if numberOfTickers == 5:
+        weights = [np.array([w, ww, 1 - w - ww, 1 - w - ww - www, 1 - w - ww - wwww]) for w in np.linspace(0, 1, n_points) for ww in np.linspace(0, 1 - w, n_points) for www in np.linspace(0, 1 - w - ww, n_points) for wwww in np.linspace(0, 1 - w - ww - www, n_points)]
     
-    weights = [np.array([w, 1-w]) for w in np.linspace(0, 1, n_points)]
     rets = [portfolio_return(w, er) for w in weights]
     vols = [portfolio_vol(w, cov) for w in weights]
     ef = pd.DataFrame({
