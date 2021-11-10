@@ -46,7 +46,7 @@ def portoflio_construction(tickers_weights, customer_initial_investment, simulat
     total_returns = pd.concat(returns, axis = 1)
     er = ut.annualize_rets(total_returns, 252)
     cov = total_returns.cov()
-    ef = ut.efN(100, er, cov, len(tickers))
+    ef = ut.ef2(100, er, cov)
     plt.title("Efficient Frontier")
     plt.plot(ef["Volatility"], ef["Returns"])
     plt.xlabel("Volatility")
