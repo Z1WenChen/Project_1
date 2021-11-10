@@ -4,10 +4,12 @@
 import pandas as pd
 import sqlalchemy as sql
 import questionary
-from MCForecastTools import MCSimulation
 import matplotlib.pyplot as plt
-import utility as ut
 import numpy as np
+
+from MCForecastTools import MCSimulation
+import utility as ut
+
 
 tickers = []
 
@@ -168,14 +170,14 @@ if __name__ == "__main__":
 
     print("\n......Instruction.....\n")
 
-    print("Step 1: Please enter your desired tickers in your portfolio. For example, TSLA BA SPY\n")
-    print("Step 2: Please enter your desired tickers weights in your portfolio. For example, 0.3 0.4 0.3 \n")
+    print("Step 1: Please enter your desired 2 tickers in your portfolio (for bonds exposure please choose AGG or TLT). For example, AGG BA \n")
+    print("Step 2: Please enter your desired tickers weights in your portfolio. For example, 0.3 0.7 \n")
     print("REMEMBER: The numbers entered in the first step and the second step should be added equal to 1. \n")
     print("Step 3: Please enter your initial investment for your simulated portfolio. \n")
     print("Step 4: Please enter how many simulations to run. Recommendation: 400, but please enter the times based on your need. \n")
     
     # Let the users customize their portfolios with Bond/Stock weights, initial investment, and simulation times
-    customer_tickers = questionary.text("What are your desired tickers in the portfolio?").ask()
+    customer_tickers = questionary.text("What are your desired 2 tickers in the portfolio?").ask()
     customer_tickers_weights = questionary.text("What are your desired tickers weights in the portfolio?").ask()
     customer_initial_investment = questionary.text("What's your intial investment for your simulated portfolio?").ask()
     simulation_times = questionary.text("How many simulations do you want to run?").ask()
@@ -196,13 +198,19 @@ if __name__ == "__main__":
     while running:
 
         # Use the conditional statement to prevent the wrong weights input
-        s = sum(tickers_weights) 
-        if s == 1.0:
-            continue_running = portoflio_construction(tickers_weights, customer_initial_investment, simulation_times)
-            if continue_running == 'y':
-                running = True
+        sum_of_tickers_weights = sum(tickers_weights)
+        number_of_tickers = len(tickers)
+
+        if number_of_tickers == 2:
+            if sum_of_tickers_weights == 1.0:
+                continue_running = portoflio_construction(tickers_weights, customer_initial_investment, simulation_times)
+                if continue_running == 'y':
+                    running = True
+                else:
+                    running = False
             else:
+                print ("Sorry, please input the correct weights and try again. Remember, two weights should be added equal to 1")
                 running = False
         else:
-            print ("Sorry, Please input the correct weights and try again. Remember, two weights should be added equal to 1")
+            print ("Sorry, please input strictly 2 tickers and try again.")
             running = False
