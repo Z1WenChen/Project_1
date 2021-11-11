@@ -2,16 +2,10 @@
 
 # Import modules
 import pandas as pd
-import sqlalchemy as sql
 import questionary
 import matplotlib.pyplot as plt
-import numpy as np
-
 from MCForecastTools import MCSimulation
 import utility as ut
-
-
-tickers = []
 
 
 
@@ -40,8 +34,8 @@ def portoflio_construction(tickers_weights, customer_initial_investment, simulat
 
     returns = []
 
-    for t in tickers:
-        returns.append(ut.asset_return(prices_df[t]["close"]))
+    for ticker in tickers:
+        returns.append(ut.asset_return(prices_df[ticker]["close"]))
 
     total_returns = pd.concat(returns, axis = 1)
     er = ut.annualize_rets(total_returns, 252)
@@ -143,7 +137,7 @@ def portoflio_construction(tickers_weights, customer_initial_investment, simulat
     
     # Create a statement that displays the `results` of simulated portfolio calculation.
     # On a separate line (\n) ask the use if they would like to continue running the application.
-    results = f"There is a 95% chance that an initial investment of ${customer_initial_investment} in the simulated stock and bond portfolio over the next 3 years will end within in the range of ${ci_lower_three_cumulative_return: .2f} and ${ci_upper_three_cumulative_return: .2f}. The Sharpe ratio of your simulated portfolio is {sharpe_ratio: .2f}"
+    results = f"There is a 95% chance that an initial investment of ${customer_initial_investment} in the simulated portfolio over the next 3 years will end within in the range of ${ci_lower_three_cumulative_return: .2f} and ${ci_upper_three_cumulative_return: .2f}. The Sharpe ratio of your simulated portfolio is {sharpe_ratio: .2f}"
     
     # Using the `results` statement created above,
     # prompt the user to run the report again (`y`) or exit the program (`n`).
@@ -176,14 +170,13 @@ if __name__ == "__main__":
     print("Step 3: Please enter your initial investment for your simulated portfolio. \n")
     print("Step 4: Please enter how many simulations to run. Recommendation: 400, but please enter the times based on your need. \n")
     
-    # Let the users customize their portfolios with Bond/Stock weights, initial investment, and simulation times
+    # Let the users customize their portfolios with tickers' weights, initial investment, and simulation times
     customer_tickers = questionary.text("What are your desired 2 tickers in the portfolio?").ask()
     customer_tickers_weights = questionary.text("What are your desired tickers weights in the portfolio?").ask()
     customer_initial_investment = questionary.text("What's your intial investment for your simulated portfolio?").ask()
     simulation_times = questionary.text("How many simulations do you want to run?").ask()
 
-
-
+    tickers = []
     tickers = list(filter(None, customer_tickers.split()))
     tickers_weights = list(map(float, list(filter(None, customer_tickers_weights.split()))))
     customer_initial_investment = float(customer_initial_investment)
@@ -194,7 +187,7 @@ if __name__ == "__main__":
     running = True
 
     # While running is `True` call the `portoflio_construction` function.
-    # Pass the "customer_bond_weight", "customer_stock_weight", "customer_initial_investment", and "simulation_times" as parameters.
+    # Pass the "tickers_weights", "customer_initial_investment", and "simulation_times" as parameters.
     while running:
 
         # Use the conditional statement to prevent the wrong weights input
