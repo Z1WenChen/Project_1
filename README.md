@@ -52,6 +52,7 @@ os
 To use this application, simply clone the repo and open the Automatic_Portfolio_Construction.py file in your terminal. You will prompted with various questions regarding your desired portfolio composition.
 
 Example of application instructions and hypothetical user input in CLI:
+
 ![CLI_1 Instructions](https://user-images.githubusercontent.com/89161654/141343448-46a2b53a-2eab-4dfc-ab19-3a16fea420ba.png)
 
 
@@ -60,21 +61,26 @@ You will first be asked to input your desired 2 tickers for your simulated portf
 Example of Returned Figures:
 
 1. Efficient Frontier
+
 ![Figure_1](https://user-images.githubusercontent.com/89161654/141343598-e23bcc8f-6b5c-4752-999c-60aebd27e753.png)
 
 2. Portfolio Composition
+
 ![Figure_2 Portfolio Composition](https://user-images.githubusercontent.com/89161654/141343602-aa0f1881-f0b2-4ee6-b45d-84ab98ffa9ca.png)
 
 3. Simulated Returns Over the Next 3 Years
+
 ![Figure_3 Simulated Returns](https://user-images.githubusercontent.com/89161654/141343591-d5fade78-9ead-4cf1-a8e4-fd4d2f5975ce.png)
 
 4. Simulated Portfolio Performance Over the Next 3 Years
+
 ![Figure_4 Simulated Portfolio Performance](https://user-images.githubusercontent.com/89161654/141343595-ee22ff71-82fe-4093-93e9-3cfb2596bb2a.png)
 
 5. 95% Confidence Interval and Sharpe Ratio in CLI
+
 ![CLI_2 95 CI and Sharpe](https://user-images.githubusercontent.com/89161654/141343720-fdfb572c-608a-4720-a791-bc02e7883f72.png)
 
-
+At the end of the CLI, you will be asked whether you would like to run the simulations again. To do so, input y, otherwise input n to exit.
 
 
 ## Contributors
