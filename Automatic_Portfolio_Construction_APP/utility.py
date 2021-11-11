@@ -64,8 +64,8 @@ def ef2(n_points, er, cov):
     Plots the 2-asset efficient frontier
     """
 
-    
     weights = [np.array([w, 1-w]) for w in np.linspace(0, 1, n_points)]
+    
     rets = [portfolio_return(w, er) for w in weights]
     vols = [portfolio_vol(w, cov) for w in weights]
     ef = pd.DataFrame({

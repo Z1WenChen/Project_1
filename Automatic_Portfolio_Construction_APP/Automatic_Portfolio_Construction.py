@@ -4,31 +4,27 @@
 import pandas as pd
 import sqlalchemy as sql
 import questionary
-from MCForecastTools import MCSimulation
 import matplotlib.pyplot as plt
-import utility as ut
 import numpy as np
+
+from MCForecastTools import MCSimulation
+import utility as ut
+
+
+tickers = []
 
 
 
 # Create a function called `portoflio_construction` that will construct a portfolio based on users' weights
 # This function will be called from the `__main__` loop.
 
-def portoflio_construction(customer_bond_weight, customer_stock_weight, customer_initial_investment, simulation_times):
+def portoflio_construction(tickers_weights, customer_initial_investment, simulation_times):
 
 
     ###Part 1: Prepare the data
 
-    #Change the users' inputs to float and append to the weight list
-    customber_choose_weight = []
-    customber_choose_weight.append(customer_bond_weight)
-    customber_choose_weight.append(customer_stock_weight)
-
     print("\n.....Running the App.....\n")
-    
-    
-    #Setup parameters for API Data
-    tickers = ["SPY", "AGG"]
+
     
     #Get API Data in a dataframe
     prices_df = ut.get_data(tickers)
@@ -41,14 +37,18 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
     print("\n.....Displaying Efficient Frontier......\n")
 
     #Prepare data for Efficient Frontier Calculation
-    AGG_return = ut.asset_return(prices_df["AGG"]["close"])
-    SPY_return = ut.asset_return(prices_df["SPY"]["close"])
-    returns_AGG_SPY = pd.concat ([AGG_return, SPY_return], axis = 1)
-    er = ut.annualize_rets(returns_AGG_SPY, 252)
-    cov = returns_AGG_SPY.cov()
-    ef_AGG_SPY = ut.ef2(100, er, cov)
+
+    returns = []
+
+    for t in tickers:
+        returns.append(ut.asset_return(prices_df[t]["close"]))
+
+    total_returns = pd.concat(returns, axis = 1)
+    er = ut.annualize_rets(total_returns, 252)
+    cov = total_returns.cov()
+    ef = ut.ef2(100, er, cov)
     plt.title("Efficient Frontier")
-    plt.plot(ef_AGG_SPY["Volatility"], ef_AGG_SPY["Returns"])
+    plt.plot(ef["Volatility"], ef["Returns"])
     plt.xlabel("Volatility")
     plt.ylabel("Return")
     plt.show()
@@ -62,7 +62,7 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
     #set up MC simulation
     MC_weight = MCSimulation(
       portfolio_data = prices_df,
-      weights = customber_choose_weight,
+      weights = tickers_weights,
       num_simulation = simulation_times,
       num_trading_days = 252*3)
     
@@ -81,8 +81,8 @@ def portoflio_construction(customer_bond_weight, customer_stock_weight, customer
     ###Part 4:Visuallation
 
     #Print the simulated portfolio allocation
-    portfolio_allocation = customber_choose_weight
-    portfolio_labels = ["AGG", "SPY"]
+    portfolio_allocation = tickers_weights
+    portfolio_labels = tickers
 
     plt.title("Simulated Portfolio Allocation")
     plt.pie(portfolio_allocation, labels=portfolio_labels, autopct="%0.0f%%")
@@ -170,21 +170,22 @@ if __name__ == "__main__":
 
     print("\n......Instruction.....\n")
 
-    print("Step 1: Please enter your desired portion of bond in your portfolio. For example, 40% is to input .40\n")
-    print("Step 2: Please enter your desired portion of stock in your portfolio. For example, 60% is to input .60\n")
+    print("Step 1: Please enter your desired 2 tickers in your portfolio (for bonds exposure please choose AGG or TLT). For example, AGG BA \n")
+    print("Step 2: Please enter your desired tickers weights in your portfolio. For example, 0.3 0.7 \n")
     print("REMEMBER: The numbers entered in the first step and the second step should be added equal to 1. \n")
     print("Step 3: Please enter your initial investment for your simulated portfolio. \n")
     print("Step 4: Please enter how many simulations to run. Recommendation: 400, but please enter the times based on your need. \n")
     
     # Let the users customize their portfolios with Bond/Stock weights, initial investment, and simulation times
-    customer_bond_weight = questionary.text("What's your desired weight of Bond in the portfolio?").ask()
-    customer_stock_weight = questionary.text("What's your desired weight of Stock in the portfolio?").ask()
+    customer_tickers = questionary.text("What are your desired 2 tickers in the portfolio?").ask()
+    customer_tickers_weights = questionary.text("What are your desired tickers weights in the portfolio?").ask()
     customer_initial_investment = questionary.text("What's your intial investment for your simulated portfolio?").ask()
     simulation_times = questionary.text("How many simulations do you want to run?").ask()
 
 
-    customer_bond_weight = float(customer_bond_weight)
-    customer_stock_weight = float(customer_stock_weight)
+
+    tickers = list(filter(None, customer_tickers.split()))
+    tickers_weights = list(map(float, list(filter(None, customer_tickers_weights.split()))))
     customer_initial_investment = float(customer_initial_investment)
     simulation_times = int(simulation_times)
 
@@ -197,12 +198,19 @@ if __name__ == "__main__":
     while running:
 
         # Use the conditional statement to prevent the wrong weights input
-        if (customer_bond_weight + customer_stock_weight) == 1:
-            continue_running = portoflio_construction(customer_bond_weight, customer_stock_weight,customer_initial_investment, simulation_times)
-            if continue_running == 'y':
-                running = True
+        sum_of_tickers_weights = sum(tickers_weights)
+        number_of_tickers = len(tickers)
+
+        if number_of_tickers == 2:
+            if sum_of_tickers_weights == 1.0:
+                continue_running = portoflio_construction(tickers_weights, customer_initial_investment, simulation_times)
+                if continue_running == 'y':
+                    running = True
+                else:
+                    running = False
             else:
+                print ("Sorry, please input the correct weights and try again. Remember, two weights should be added equal to 1")
                 running = False
         else:
-            print ("Sorry, Please input the correct weights and try again. Remember, two weights should be added equal to 1")
+            print ("Sorry, please input strictly 2 tickers and try again.")
             running = False
