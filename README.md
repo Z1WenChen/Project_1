@@ -4,9 +4,9 @@
 
 This project is a Command Line Interface (CLI) that was created as a tool for investors to visualize various Monte Carlo simulations of a hypothetical portfolio based on bonds and equity markets. Investors face a great deal of uncertainty and risk in their investment decisions. This application was built with the goal of clarifying that uncertainty through the concepts of probability distribution and portfolio forecasting. 
 
-The project leverages the Alpaca API to collect 3 years of historical data for bond and equity markets (AGG and SPY). The historical data is used to predict future outcomes through Monte Carlo simulations. 
+The project leverages the Alpaca API to collect 3 years of historical data for bond and equity markets. The historical data is used to predict the next 3 years of future outcomes through Monte Carlo simulations. 
 
-This application offers a variety of user customizations. The project uses Questionary to collect input values from the user to construct the simulations and visualizations based on their desired portfolio composition. Users have the ability to customize the portfolio weight for 2 different tickers, their desired initial investment, and the number of Monte Carlo simulations they would like to run. After the simulations are run, the users will receive visual plots regarding their portfolio composition, the results of the Monte Carlo simulations, the simulated returns over the next 3 years, the 95% confidence interval of the simulated portfolio, the efficient frontier, and the Sharpe ratio.
+This application offers a variety of user customizations. The project uses Questionary to collect input values from the user to construct the simulations and visualizations based on their desired portfolio composition. Users have the ability to customize the portfolio weight for 2 different tickers, their desired initial investment, and the number of Monte Carlo simulations they would like to run. After the simulations are run, the users will receive visual plots regarding the efficient frontier, their portfolio composition, the results of the Monte Carlo simulations, the simulated returns over the next 3 years, the 95% confidence interval of the simulated portfolio, summary statistics, and the Sharpe ratio.
 
 ## Technologies
 
@@ -58,7 +58,7 @@ Example of application instructions and hypothetical user input in CLI:
 
 You will first be asked to input your desired 2 tickers for your simulated portfolio. We recommend mixing asset classes such as bonds and equities. Then you will be asked to input your desired portfolio weight for the tickers you have chosen. Enter a percentage value as a decimal (i.e. 0.4 for 40% weight). Then, enter the initial investment size in US dollars that you would like to allocate for your portfolio. Lastly, enter the number of Monte Carlo simulations you would like to run. The higher the number of simulations, the greater the theoretical accuracy of the data. The output will return the results of the simulated portfolio.
 
-Example of Returned Figures:
+### Example of Returned Figures:
 
 1. Efficient Frontier
 
@@ -76,7 +76,7 @@ Example of Returned Figures:
 
 ![Figure_4 Simulated Portfolio Performance](https://user-images.githubusercontent.com/89161654/141343595-ee22ff71-82fe-4093-93e9-3cfb2596bb2a.png)
 
-5. 95% Confidence Interval and Sharpe Ratio in CLI
+5. Summary Statistics, 95% Confidence Interval and Sharpe Ratio in CLI
 
 ![CLI_2 95 CI and Sharpe](https://user-images.githubusercontent.com/89161654/141343720-fdfb572c-608a-4720-a791-bc02e7883f72.png)
 
